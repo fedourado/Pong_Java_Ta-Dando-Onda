@@ -56,9 +56,11 @@ public class Cena implements GLEventListener, KeyListener {
                   public static final String MENU = "imagens/fundo-menu.jpg";
                   public static final String BALL = "imagens/BeachBallTexture2.jpg";
                   public static final String GAMEOVER = "imagens/gameover.jpg";
-                  public static final String BOARD = "imagens/wood3.jpg";
+                  public static final String BOARD = "imagens/colors.jpg";
                   public static final String FASEONE = "imagens/fase1.jpg";
                   public static final String FASETWO = "imagens/fase2.jpg";
+                  public static final String FASETHREE = "imagens/fase3.jpg";
+                  public static final String NEXTFASE = "imagens/nextfase.jpg";
                   
 
                   private int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -108,14 +110,26 @@ public class Cena implements GLEventListener, KeyListener {
 		case 0:
 			runMenu();
 			break;
-		case 1:
-			runFaseOne();
+                                    case 1:
+			runRules();
 			break;
 		case 2:
+			runFaseOne();
+			break;
+                        	case 3:
+			runNextFase();
+			break;
+		case 4:
 			runFaseTwo();
 			break;
-		case 3:
-			gameOver();
+                                    case 5:
+			runNextFase();
+			break;
+		case 6:
+			runFaseThree();
+			break;
+                                    case 8:
+                                                      gameOver();
 			break;
 		}
 		if (lightOn) {
@@ -219,17 +233,9 @@ public class Cena implements GLEventListener, KeyListener {
 		drawText(left, begin -= 0.1f, size, "O objetivo do jogo é obter a mais quantidade de pontos");
 		drawText(left, begin -= 0.1f, size, "rebatendo a bola e impedindo ela de cair para fora da prancha.");
 		drawText(left, begin -= 0.1f, size, "-----------------------------");
-		drawText(left, begin -= 0.1f, size, "# Comandos:");
-		drawText(left, begin -= 0.1f, size, "- Mover a prancha = < > ou A D");
-		drawText(left, begin -= 0.1f, size, "- Pausar jogo = P");
-		drawText(left, begin -= 0.1f, size, "- Parar o jogo e ir para o menu inicial = X");
-		drawText(left, begin -= 0.1f, size, "-----------------------------");
-		drawText(left, begin -= 0.1f, size, "# Regras:");
-		drawText(left, begin -= 0.1f, size, "- Cada vez que a bola for rebatida será acumalado 10 pontos");
-		drawText(left, begin -= 0.1f, size, "- Quando acumular 150 pontos o jogador irá para a próxima fase");
-		drawText(left, begin -= 0.1f, size, "- Na segunda fase os pontos são infinitos \\o/");
-		drawText(left, begin -= 0.1f, size, "-----------------------------");
 		drawText(left, begin -= 0.1f, size, "PRESSIONE 'ENTER' PARA INICIAR O JOGO");
+                                    drawText(left, begin -= 0.1f, size, "PRESSIONE 'R' PARA LER AS REGRAS E OS COMANDOS");
+                
                 
                                     backgroundMenu();
 	}
@@ -242,7 +248,7 @@ public class Cena implements GLEventListener, KeyListener {
 
                                 textura.setAutomatica(false);
                                 
-                                        //configura os filtros
+                                //configura os filtros
                                 textura.setFiltro(filtro);
                                 textura.setModo(GL2.GL_MODULATE);
                                 textura.setWrap(wrap);  
@@ -268,7 +274,31 @@ public class Cena implements GLEventListener, KeyListener {
                                 textura.desabilitarTextura(gl, 0);
 
 	}
+                    
+                    public void runRules() {
+		String size = "big";
+		float left = -0.3f;
+		float begin = 0.8f;
+              
+		drawText(left, begin -= 0.1f, size, "# Comandos:");
+		drawText(left, begin -= 0.1f, size, "- Mover a prancha = < > ou A D");
+		drawText(left, begin -= 0.1f, size, "- Pausar jogo = P");
+		drawText(left, begin -= 0.1f, size, "- Parar o jogo e ir para o menu inicial = X");
+		drawText(left, begin -= 0.1f, size, "-----------------------------");
+		drawText(left, begin -= 0.1f, size, "# Regras:");
+		drawText(left, begin -= 0.1f, size, "- Cada vez que a bola for rebatida será acumalado 10 pontos");
+		drawText(left, begin -= 0.1f, size, "- Quando acumular 100 pontos o jogador irá para a segunda fase");
+                                    drawText(left, begin -= 0.1f, size, "- Quando acumular 200 pontos o jogador irá para a terceira fase");
+		drawText(left, begin -= 0.1f, size, "- Na segunda terceira fase ao atingir 1000 pontos");
+                                    drawText(left, begin -= 0.1f, size, "acabou o jogo!! :D");
+		drawText(left, begin -= 0.1f, size, "-----------------------------");
+		drawText(left, begin -= 0.1f, size, "PRESSIONE 'ENTER' PARA INICIAR O JOGO");
+                                    drawText(left, begin -= 0.1f, size, "PRESSIONE 'X' PARA VOLTAR AO MENU");
+                
+                                    backgroundMenu();
+	}
         
+//------------------------------------------------------------------------FASE 1-------------------------------------------------------------                   
 
 	public void runFaseOne() {
 		if (!isGamePaused) {
@@ -281,11 +311,11 @@ public class Cena implements GLEventListener, KeyListener {
 		drawBall();
 
 		if (userScore == 30) {
-			gameFase = 2;
+			gameFase = 3;
 		}
 
 		if (userLives == 0) {
-			gameFase = 3;
+			gameFase = 8;
 		}
     
 		drawText(0.8f, 0.9f, "big", "Pontuação: " + userScore);
@@ -326,13 +356,44 @@ public class Cena implements GLEventListener, KeyListener {
 	}
                   
         
-        
+//--------------------------------------------------------------FASE 2----------------------------------------------------------------------       
 	public void drawFase2Art() {
 		drawText(-0.13f, 0.6f, "big", "FASE 2 - ONDA SINISTRA");
+        }
+
+	public void runFaseTwo() {
+		gameSpeed = 0.05f;
+		if (!isGamePaused) {
+			ballPhysicsEngine();
+		} else {
+			drawText(-0.2f, 0, "big", "JOGO PAUSADO");
+		}
+
+		drawBottomBar();
+		drawBall();
+		drawObstableFase2();
+		drawFase2Art();
+                
+                                   if (userScore == 80) {
+			gameFase = 5;
+		}
+
+		if (userLives == 0) {
+			gameFase = 8;
+		}
+
+		drawText(0.8f, 0.9f, "big", "Pontuação: " + userScore);
                                     backgroundTwo();
+
+		for (int i = 1; i <= 5; i++) {
+			if (userLives >= i)
+				drawLives(0.1f * i, true);
+			else
+				drawLives(0.1f * i, false);
+		}
 	}
-	
-         public void backgroundTwo() {
+
+                  public void backgroundTwo() {
                     
                       textura.setAutomatica(false);
                 
@@ -357,10 +418,30 @@ public class Cena implements GLEventListener, KeyListener {
                     textura.desabilitarTextura(gl, 0);
                     
 	}
-	
-
-	public void runFaseTwo() {
-		gameSpeed = 0.03f;
+     
+                     public void drawObstableFase2() {
+		gl.glPushMatrix();
+			gl.glBegin(GL2.GL_QUADS);				
+				gl.glColor3f(1, 1, 1);
+				gl.glVertex2f(-0.2f, 0.5f);
+				gl.glVertex2f(0.2f, 0.5f);
+				gl.glVertex2f(0.2f, -0.1f);
+				gl.glVertex2f(-0.2f, -0.1f);
+			gl.glEnd();
+		gl.glPopMatrix();
+	}
+ 
+ //--------------------------------------------------------------FASE 3----------------------------------------------------------------------                          
+                     
+                     
+                     public void drawFase3Art() {
+		drawText(-0.13f, 0.6f, "big", "FASE 3 - TSUNAMI");
+	}
+                     
+                     
+                     
+                   public void runFaseThree() {
+		gameSpeed = 0.08f;
 		if (!isGamePaused) {
 			ballPhysicsEngine();
 		} else {
@@ -369,14 +450,19 @@ public class Cena implements GLEventListener, KeyListener {
 
 		drawBottomBar();
 		drawBall();
-		drawObstableFase2();
-		drawFase2Art();
+		drawObstableFase3();
+		drawFase3Art();
+                
+                                   if (userScore == 100) {
+			gameFase = 8;
+		}
 
 		if (userLives == 0) {
-			gameFase = 3;
+			gameFase = 8;
 		}
 
 		drawText(0.8f, 0.9f, "big", "Pontuação: " + userScore);
+                                    backgroundThree();
 
 		for (int i = 1; i <= 5; i++) {
 			if (userLives >= i)
@@ -386,7 +472,34 @@ public class Cena implements GLEventListener, KeyListener {
 		}
 	}
 
-                     public void drawObstableFase2() {
+                        
+                     public void backgroundThree() {
+                    
+                      textura.setAutomatica(false);
+                
+                    //configura os filtros
+                    textura.setFiltro(filtro);
+                    textura.setModo(GL2.GL_DECAL);
+                    textura.setWrap(wrap);  
+
+                    //cria a textura indicando o local da imagem e o índice
+                    textura.gerarTextura(gl, FASETHREE, 0);
+
+                    gl.glColor3f(1f,1f,1f);
+
+                    gl.glBegin(GL2.GL_QUADS);
+                        gl.glTexCoord2f(0.0f, 0.0f);   gl.glVertex2f(-1.0f,-1.0f);
+                        gl.glTexCoord2f(0.0f, limite);  gl.glVertex2f(-1.0f,1.0f);
+                        gl.glTexCoord2f(limite, limite); gl.glVertex2f(1.0f,1.0f);
+                        gl.glTexCoord2f(limite, 0.0f);  gl.glVertex2f(1.0f,-1.0f);                
+                    gl.glEnd();
+
+                    //desabilita a textura indicando o índice
+                    textura.desabilitarTextura(gl, 0);
+                    
+	}
+                   
+                     public void drawObstableFase3() {
 		gl.glPushMatrix();
 			gl.glBegin(GL2.GL_QUADS);				
 				gl.glColor3f(1, 1, 1);
@@ -398,20 +511,16 @@ public class Cena implements GLEventListener, KeyListener {
 		gl.glPopMatrix();
 	}
                      
-                         
+ //--------------------------------------------------------------PRANCHA----------------------------------------------------------------------     
+                     
 	public void drawBottomBar() {
             
                                  textura.setAutomatica(false);
 
-                                  //configura os filtros
-                                  textura.setFiltro(filtro);
-                                  textura.setModo(GL2.GL_DECAL);
-                                  textura.setWrap(wrap);  
-
                                   //cria a textura indicando o local da imagem e o índice
                                   textura.gerarTextura(gl, BOARD, 0);
 
-                                  gl.glColor3f(1f,1f,1f);
+                                  gl.glColor3f(0f,0f,0f);
                                   
                                     gl.glPushMatrix();
 			gl.glTranslatef(userBarMove, 0, 0);
@@ -426,9 +535,13 @@ public class Cena implements GLEventListener, KeyListener {
 				gl.glVertex2f(-0.2f, -0.9f);
 			gl.glEnd();
 		gl.glPopMatrix();
+                                    
+                                //desabilita a textura indicando o índice
+                                textura.desabilitarTextura(gl, 0);
     
                   }	
 
+//----------------------------------------------------------------------------------------------------------------------------------------------  
         
 	public void drawLives(float pos, boolean filled) {
 		gl.glPushMatrix();
@@ -445,18 +558,21 @@ public class Cena implements GLEventListener, KeyListener {
 		gl.glPopMatrix();
 	}
 
+//------------------------------------------------------------ENDGAME---------------------------------------------------------------------
+        
 	public void gameOver() {          
 		float begin = 0.8f;
 		float left = -0.1f;
 		drawText(left, begin -= 0.1f, "big", " -----------");
-		drawText(left, begin -= 0.1f, "big", "| GAME OVER |");
+		drawText(left, begin -= 0.1f, "big", "FIM DO JOGO");
 		drawText(left, begin -= 0.1f, "big", " -----------");
 		drawText(left, begin -= 0.1f, "big", "Pontuação final: " + userScore);
-		drawText(left, begin -= 0.1f, "big", "E - Menu inicial");
+		drawText(left, begin -= 0.1f, "big", "X - Menu inicial");
 		drawText(left, begin -= 0.1f, "big", "F - Fechar o jogo");
                                     gameOverBack();
 	}
         
+//----------------------------------------------------------------------------------------------------------------------------------------------        
                     public void gameOverBack() {
                         
                               gl.glEnable(GL2.GL_BLEND);
@@ -486,8 +602,53 @@ public class Cena implements GLEventListener, KeyListener {
 
                   }
                     
+//-------------------------------------------------------------------WINNER----------------------------------------------------------------                    
+                    
+                  public void runNextFase() {          
+		float begin = 0.8f;
+		float left = -0.1f;
+		drawText(left, begin -= 0.1f, "big", " -----------");
+		drawText(left, begin -= 0.1f, "big", "Você passou para próxima fase!");
+                		drawText(left, begin -= 0.1f, "big", " -----------");
+                		drawText(left, begin -= 0.1f, "big", "Pontuação final: " + userScore);
+                                    drawText(left, begin -= 0.1f, "big", " -----------");
+                		drawText(left, begin -= 0.1f, "big", "Desaja prosseguir?");
+                                    drawText(left, begin -= 0.1f, "big", "Q - Sim");
+		drawText(left, begin -= 0.1f, "big", "X - Menu inicial");
+		drawText(left, begin -= 0.1f, "big", "F - Fechar o jogo");
+                                    nextFaseBackground();
+	}
+                  
+                  public void nextFaseBackground() {
+                        
+                              gl.glEnable(GL2.GL_BLEND);
+                              gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+
+                              textura.setAutomatica(false);
+
+                              //configura os filtros
+                              textura.setFiltro(filtro);
+                              textura.setModo(GL2.GL_DECAL);
+                              textura.setWrap(wrap);  
+
+                              //cria a textura indicando o local da imagem e o índice
+                              textura.gerarTextura(gl, NEXTFASE, 0);
+
+                              gl.glColor3f(1f,1f,1f);
+
+                              gl.glBegin(GL2.GL_QUADS);
+                                  gl.glTexCoord2f(0.0f, 0.0f);   gl.glVertex2f(-1.0f,-1.0f);
+                                  gl.glTexCoord2f(0.0f, limite);  gl.glVertex2f(-1.0f,1.0f);
+                                  gl.glTexCoord2f(limite, limite); gl.glVertex2f(1.0f,1.0f);
+                                  gl.glTexCoord2f(limite, 0.0f);  gl.glVertex2f(1.0f,-1.0f);                
+                              gl.glEnd();
+
+                              //desabilita a textura indicando o índice
+                              textura.desabilitarTextura(gl, 0);
+
+                  }
    
-        
+//-----------------------------------------------------------OUTROS ELEMENTOS------------------------------------------------------        
 
 	public void drawText(float x, float y, String size, String phrase) {
 		gl.glRasterPos2f(x, y);
@@ -666,9 +827,15 @@ public class Cena implements GLEventListener, KeyListener {
 		case KeyEvent.VK_P:
 			isGamePaused = !isGamePaused;
 			break;
+                        
+                                    case KeyEvent.VK_R:
+                                                    if (gameFase == 0) {
+                                                                      gameFase = 1;
+                                                      }
+                        
 		case KeyEvent.VK_ENTER:
 			if (gameFase == 0) {
-				gameFase = 1;
+				gameFase = 2;
 			}
 			break;
 		case KeyEvent.VK_X:
@@ -681,7 +848,15 @@ public class Cena implements GLEventListener, KeyListener {
 			if (gameFase == 3) {
 				gameFase = 0;
 				resetData();
+                                                     }
+                                                      break;
+                                    case KeyEvent.VK_Q:
+			if (gameFase == 3) {
+                                                               gameFase = 4;
+                                                               } else if (gameFase == 5) {
+                                                                                 gameFase = 6;
 			}
+                                                               
 			break;
 		case KeyEvent.VK_F:
 			if (gameFase == 3) {
